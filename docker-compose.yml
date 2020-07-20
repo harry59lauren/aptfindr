@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+
+  properties:
+    build:
+      context: ./services/properties
+      dockerfile: Dockerfile
+    volumes:
+      - './services/properties:/usr/src/app'
+    ports:
+      - 5001:5000
+    environment:
+      - FLASK_ENV=development
+      - APP_SETTINGS=app.config.DevelopmentConfig
+      - DATABASE_URL=postgres://postgres:postgres@properties-db:5432/properties_dev  # new
+      - DATABASE_TEST_URL=postgres://postgres:postgres@properties-db:5432/properties_test  # new
+    depends_on:  # new
+      - properties-db
+
+  properties-db:  # new
+    build:
+      context: ./services/properties/app/db
+      dockerfile: Dockerfile
+    ports:
+      - 5435:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
